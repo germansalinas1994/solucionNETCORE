@@ -1,0 +1,112 @@
+﻿@page "/empleados"
+@using BlazorCrud.Shared;
+@using BlazorCrud.Cliente.Services;
+@using CurrieTechnologies.Razor.SweetAlert2;
+
+@inject IJSRuntime jsRuntime
+
+
+
+@inject IEmpleadoService empleadoService
+@*si no pongo el using no lo puedo usar*@
+@inject SweetAlertService Swal;
+
+<PageTitle>Counter</PageTitle>
+
+<button class="btn btn-primary" @onclick="()=>MostrarAlerta()">Mostrar Alerta</button>
+
+
+<h3>Listado De Empleados</h3>
+<div>
+    <a class="btn btn-success btn-sm mb-3" href="empleado">Nuevo Empleado</a>
+    @if (listaEmpleados != null)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th> Nombre </th>
+                    <th> Departamento</th>
+                    <th> Sueldo</th>
+                    <th> Fecha Contrato</th>
+                    <th> </th>
+
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in listaEmpleados)
+                {
+                    <tr>
+                        <td>@item.NombreCompleto</td>
+                        <td>@item.Departamento!.Nombre</td>
+                        <td>@item.Sueldo</td>
+                        <td>@item.FechaContrato.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            @*este boton es para editar el empleado por eso si lo aprieto pasa el id empleado*@
+                            <a class="btn btn-primary btn-sm" href="empleado/@item.IdEmpleado">
+                                <i class="oi oi-pencil"></i>
+                            </a>
+                            @*VER LA SINTAXIS SI SE PUEDE HACER DISTINTA*@
+                            @*aca la sintaxis es asi porque el onclick directamente llama al metodo que esta implementado en el service de la capa del cliente*@
+                            <button type="button" class="btn btn-danger btn-sm ms-2" @onclick="(()=> Eliminar(item.IdEmpleado))">
+                                <i class="oi oi-trash"></i>
+
+                            </button>
+                        </td>
+                    </tr>
+
+
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+
+
+
+@code {
+
+
+    List<EmpleadoDto>? listaEmpleados = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        listaEmpleados = await empleadoService.Lista();
+
+    }
+    private async Task Eliminar(int id)
+    {
+        var resultado = await Swal.FireAsync(new SweetAlertOptions
+        {
+            Title = "Eliminar Empleado",
+            Text = "Desea eliminar el empleado?",
+            Icon = SweetAlertIcon.Warning,
+            ShowCancelButton = true
+        });
+
+        if (resultado.IsConfirmed)
+        {
+            var eliminado = await empleadoService.Eliminar(id);
+            //el signo de exclamacion en listaEmpleados significa que no puede ser null
+            if (eliminado != null)
+            {
+                listaEmpleados = listaEmpleados!.FindAll(e => e.IdEmpleado != id);
+
+            }
+        }
+
+
+    }
+
+
+
+    private async Task MostrarAlerta()
+    {
+        //await jsRuntime.InvokeAsync<object>("eval", "debugger;");
+
+
+        await jsRuntime.InvokeVoidAsync("alert", "Hola desde Blazor");
+    }
+}
+

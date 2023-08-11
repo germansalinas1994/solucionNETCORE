@@ -1,0 +1,78 @@
+﻿@page "/counter"
+@using BlazorCrud.Shared;
+@using BlazorCrud.Cliente.Services;
+@inject IEmpleadoService empleadoService;
+
+
+<PageTitle>Counter dsadsada</PageTitle>
+
+<h1>Counter</h1>
+
+
+
+<form>
+    <a class="btn btn-success btn-sm mb-3" href="empleado">Nuevo Empleado</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th> Nombre dsadas </th>
+                <th> Departamento</th>
+                <th> Sueldo</th>
+                <th> Fecha Contrato</th>
+                <th> </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @if (listaEmpleados == null)
+            {
+                <tr>
+                    <td colspan="5" align="center">
+                        <img style="width:50px" />
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var item in listaEmpleados)
+                {
+                    <tr>
+                        <td>@item.NombreCompleto</td>
+                        <td>@item.Departamento!.Nombre</td>
+                        <td>@item.Sueldo</td>
+                        <td>@item.FechaContrato.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            @*este boton es para editar el empleado por eso si lo aprieto pasa el id empleado*@
+                            <a class="btn btn-primary btn-sm" href="empleado/@item.IdEmpleado">
+                                <i class="oi oi-pencil"></i>
+                            </a>
+                            @*VER LA SINTAXIS SI SE PUEDE HACER DISTINTA*@
+                            @*aca la sintaxis es asi porque el onclick directamente llama al metodo que esta implementado en el service de la capa del cliente*@
+
+                        </td>
+                    </tr>
+                }
+
+            }
+        </tbody>
+    </table>
+</form>
+<p role="status">Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+
+    List<EmpleadoDto>? listaEmpleados = null;
+
+
+
+    private int currentCount = 0;
+
+    protected async Task IncrementCount()
+    {
+        currentCount++;
+        listaEmpleados = await empleadoService.Lista();
+    }
+}
+

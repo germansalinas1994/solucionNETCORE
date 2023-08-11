@@ -1,0 +1,87 @@
+﻿@page "/"
+@using BlazorCrud.Cliente.Services;
+@using BlazorCrud.Shared;
+
+@inject IEmpleadoService empleadoService
+
+<PageTitle>Index</PageTitle>
+
+
+<h1>Productos</h1>
+
+<div class="row">
+    @foreach (var producto in listaProductos)
+    {
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <img src="@producto.RutaImagen" class="card-img-top" alt="@producto.Nombre">
+                <div class="card-body">
+                    <h5 class="card-title">@producto.Nombre</h5>
+                    <p class="card-text">@producto.Descripcion</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-outline-secondary">Agregar al carrito</button>
+                        </div>
+                        <small class="text-muted">$@producto.Precio</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+@code{
+    List<EmpleadoDto>? listaEmpleados = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        listaEmpleados = await empleadoService.Lista();
+
+    }
+
+
+    protected override void OnInitialized()
+    {
+        // Inicializar la lista de productos
+        listaProductos = new List<Producto>()
+{
+        new Producto(1, "Producto 1", "Descripción del producto 1", 9.99m, "img/productos/fjords.jpg"),
+        new Producto(2, "Producto 2", "Descripción del producto 2", 19.99m, "img/productos/fjords.jpg"),
+        new Producto(3, "Producto 3", "Descripción del producto 3", 29.99m, "img/productos/fjords.jpg"),
+        new Producto(1, "Producto 1", "Descripción del producto 1", 9.99m, "img/productos/fjords.jpg"),
+        new Producto(2, "Producto 2", "Descripción del producto 2", 19.99m, "img/productos/fjords.jpg"),
+        new Producto(3, "Producto 3", "Descripción del producto 3", 29.99m, "img/productos/fjords.jpg"),
+        new Producto(1, "Producto 1", "Descripción del producto 1", 9.99m, "img/productos/fjords.jpg"),
+        new Producto(2, "Producto 2", "Descripción del producto 2", 19.99m, "img/productos/fjords.jpg"),
+        new Producto(3, "Producto 3", "Descripción del producto 3", 29.99m, "img/productos/fjords.jpg"),
+        new Producto(1, "Producto 1", "Descripción del producto 1", 9.99m, "img/productos/fjords.jpg"),
+        new Producto(2, "Producto 2", "Descripción del producto 2", 19.99m, "img/productos/fjords.jpg"),
+        new Producto(3, "Producto 3", "Descripción del producto 3", 29.99m, "img/productos/fjords.jpg")
+
+    };
+    }
+
+    public List<Producto> listaProductos { get; set; } = new List<Producto>();
+
+    public class Producto
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public string Descripcion { get; set; }
+        public decimal Precio { get; set; }
+        public string RutaImagen { get; set; } // Propiedad para la ruta de la imagen
+
+        // Constructor
+        public Producto(int id, string nombre, string descripcion, decimal precio, string rutaImagen)
+        {
+            Id = id;
+            Nombre = nombre;
+            Descripcion = descripcion;
+            Precio = precio;
+            RutaImagen = rutaImagen;
+        }
+    }
+
+}
